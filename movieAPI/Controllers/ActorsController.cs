@@ -27,6 +27,28 @@ namespace movieAPI.Controllers
            
             this.context = context;
         }
+
+        [HttpPost("SearchByName")]
+
+        public async Task<ActionResult<List<ActorMovieDTO>>>SearchByName( [FromBody] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return new List<ActorMovieDTO>();
+            }
+            return await context.Actors
+                .Where(x => x.Name.Contains(name))
+                .OrderBy(x => x.Name)
+                .Select(x => new ActorMovieDTO { Id = x.Id, Name = x.Name, Picture = x.Picture })
+                .Take(4)
+                .ToListAsync();
+
+
+
+        }
+
+
+
         [HttpGet]
      public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginationDTO paginationDTO)
         {
